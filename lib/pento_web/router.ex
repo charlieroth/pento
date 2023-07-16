@@ -18,6 +18,7 @@ defmodule PentoWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    live "/guess", GuessingGameLive
   end
 
   # Other scopes may use custom stacks.
