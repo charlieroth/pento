@@ -4,6 +4,17 @@ defmodule PentoWeb.UserRegistrationLive do
   alias Pento.Accounts
   alias Pento.Accounts.User
 
+  def mount(_params, _session, socket) do
+    changeset = Accounts.change_user_registration(%User{})
+
+    socket =
+      socket
+      |> assign(trigger_submit: false, check_errors: false)
+      |> assign_form(changeset)
+
+    {:ok, socket, temporary_assigns: [form: nil]}
+  end
+
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
@@ -32,6 +43,7 @@ defmodule PentoWeb.UserRegistrationLive do
         </.error>
 
         <.input field={@form[:email]} type="email" label="Email" required />
+        <.input field={@form[:username]} type="text" label="Username" required />
         <.input field={@form[:password]} type="password" label="Password" required />
 
         <:actions>
@@ -40,17 +52,6 @@ defmodule PentoWeb.UserRegistrationLive do
       </.simple_form>
     </div>
     """
-  end
-
-  def mount(_params, _session, socket) do
-    changeset = Accounts.change_user_registration(%User{})
-
-    socket =
-      socket
-      |> assign(trigger_submit: false, check_errors: false)
-      |> assign_form(changeset)
-
-    {:ok, socket, temporary_assigns: [form: nil]}
   end
 
   def handle_event("save", %{"user" => user_params}, socket) do

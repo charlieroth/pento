@@ -2,11 +2,12 @@ defmodule PentoWeb.GuessingGameLive do
   use PentoWeb, :live_view
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     random_number = Enum.random(1..15)
 
     {:ok,
      assign(socket,
+       session_id: session["live_socket_id"],
        guesses: 5,
        state: :guessing,
        message: "",
@@ -17,14 +18,21 @@ defmodule PentoWeb.GuessingGameLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <h1 class="text-xl font-semibold">Guessing Game</h1>
-
+    <p class="text-sm">Current User: <%= @current_user.email %></p>
+    <p class="text-sm">Session ID: <code><%= @session_id %></code></p>
+    <br />
+    <h2 class="text-xl font-semibold">Guessing Game</h2>
+    <br />
+    <p>Guesses Remaining: <%= @guesses %></p>
+    <p><%= @message %></p>
     <%= if @state == :guessing do %>
-      <h2>Guesses Remaining: <%= @guesses %></h2>
-      <h2><%= @message %></h2>
       <h2>
         <%= for n <- 1..15 do %>
-          <button class="border border-zinc-900 py-1 px-2" phx-click="guess" phx-value-number={n}>
+          <button
+            class="text-lg border border-zinc-900 py-1 px-3 hover:bg-black hover:text-white"
+            phx-click="guess"
+            phx-value-number={n}
+          >
             <%= n %>
           </button>
         <% end %>
@@ -32,22 +40,28 @@ defmodule PentoWeb.GuessingGameLive do
     <% end %>
 
     <%= if @state == :won do %>
-      <h2><%= @message %></h2>
-      <button class="border border-zinc-900 py-1 px-2" phx-click="reset">
+      <button
+        class="border border-zinc-900 py-1 px-2 hover:bg-black hover:text-white"
+        phx-click="reset"
+      >
         Play Again
       </button>
     <% end %>
 
     <%= if @state == :lost do %>
-      <h2><%= @message %></h2>
-      <button class="border border-zinc-900 py-1 px-2" phx-click="reset">
+      <button
+        class="border border-zinc-900 py-1 px-2 hover:bg-black hover:text-white"
+        phx-click="reset"
+      >
         Play Again
       </button>
     <% end %>
 
     <%= if @state == :error do %>
-      <h2><%= @message %></h2>
-      <button class="border border-zinc-900 py-1 px-2" phx-click="reset">
+      <button
+        class="border border-zinc-900 py-1 px-2 hover:bg-black hover:text-white"
+        phx-click="reset"
+      >
         Play Again
       </button>
     <% end %>
