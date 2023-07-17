@@ -62,7 +62,7 @@ defmodule PentoWeb.GuessingGameLive do
 
     higher = guess < socket.assigns.random_number
 
-    has_won = guesses > 0 and guess == socket.assigns.random_number
+    has_won = guesses >= 0 and guess == socket.assigns.random_number
     has_lost = guesses == 0 and guess != socket.assigns.random_number
     still_playing = guesses > 0 and guess != socket.assigns.random_number
 

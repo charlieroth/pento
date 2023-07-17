@@ -21,7 +21,6 @@ defmodule PentoWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    live "/guess", GuessingGameLive
   end
 
   if Application.compile_env(:pento, :dev_routes) do
@@ -58,6 +57,8 @@ defmodule PentoWeb.Router do
       on_mount: [{PentoWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+
+      live "/guess", GuessingGameLive
     end
   end
 
