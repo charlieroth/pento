@@ -71,8 +71,9 @@ defmodule PentoWeb.UserAuth do
   It clears all session data for safety. See renew_session.
   """
   def log_out_user(conn) do
-    user_token = get_session(conn, :user_token)
-    user_token && Accounts.delete_user_session_token(user_token)
+    if user_token = get_session(conn, :user_token) do
+      Accounts.delete_user_session_token(user_token)
+    end
 
     if live_socket_id = get_session(conn, :live_socket_id) do
       PentoWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})
@@ -85,13 +86,20 @@ defmodule PentoWeb.UserAuth do
   end
 
   @doc """
-  Authenticates the user by looking into the session
-  and remember me token.
+  Authenticates the user by looking into the session and remember me token.
+
+  If a user is found via the session token, the user is assigned to
+  the key `:current_user` on `conn`
   """
   def fetch_current_user(conn, _opts) do
     {user_token, conn} = ensure_user_token(conn)
-    user = user_token && Accounts.get_user_by_session_token(user_token)
-    assign(conn, :current_user, user)
+
+    if user_token do
+      user = Accounts.get_user_by_session_token(user_token)
+      assign(conn, :current_user, user)
+    else
+      assign(conn, :current_user, nil)
+    end
   end
 
   defp ensure_user_token(conn) do
@@ -173,6 +181,11 @@ defmodule PentoWeb.UserAuth do
   end
 
   defp mount_current_user(socket, session) do
+    # Will assign the key `:current_user` to the user found
+    # via the session token (if present) on `socket`
+    #
+    # If user is not found, `:current_user` will be `nil` on
+    # `socket`
     Phoenix.Component.assign_new(socket, :current_user, fn ->
       if user_token = session["user_token"] do
         Accounts.get_user_by_session_token(user_token)

@@ -1,6 +1,18 @@
 defmodule PentoWeb.UserLoginLive do
   use PentoWeb, :live_view
 
+  def mount(_params, _session, socket) do
+    email = live_flash(socket.assigns.flash, :email)
+
+    # By specifying the option `:as` to be `"user"`, when the form
+    # is submitted, triggering a POST request to /users/login_in, the
+    # params that are passed to that endpoint is a map `%{"user" => user}
+    #
+    # See `lib/pento_web/controllers/user_session_controller.ex`
+    form = to_form(%{"email" => email}, as: "user")
+    {:ok, assign(socket, form: form), temporary_assigns: [form: form]}
+  end
+
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
@@ -33,11 +45,5 @@ defmodule PentoWeb.UserLoginLive do
       </.simple_form>
     </div>
     """
-  end
-
-  def mount(_params, _session, socket) do
-    email = live_flash(socket.assigns.flash, :email)
-    form = to_form(%{"email" => email}, as: "user")
-    {:ok, assign(socket, form: form), temporary_assigns: [form: form]}
   end
 end
