@@ -19,4 +19,10 @@ defmodule Pento.Catalog.Product do
     |> unique_constraint(:sku)
     |> validate_number(:unit_price, greater_than: 0.0)
   end
+
+  def change_unit_price(changeset, current_unit_price, new_unit_price) do
+    if new_unit_price < current_unit_price do
+      add_error(changeset, :unit_price, "cannot be decreased")
+    end
+  end
 end
