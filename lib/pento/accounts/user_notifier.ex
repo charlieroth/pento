@@ -3,23 +3,11 @@ defmodule Pento.Accounts.UserNotifier do
 
   alias Pento.Mailer
 
-  # Delivers the email using the application mailer.
-  defp deliver(recipient, subject, body) do
-    email =
-      new()
-      |> to(recipient)
-      |> from({"Pento", "contact@example.com"})
-      |> subject(subject)
-      |> text_body(body)
-
-    with {:ok, _metadata} <- Mailer.deliver(email) do
-      {:ok, email}
-    end
-  end
-
   @doc """
   Deliver instructions to confirm account.
   """
+  @spec deliver_confirmation_instructions(user :: User.t(), url :: String.t()) ::
+          {:ok, Swoosh.Email.t() | {:error, term()}}
   def deliver_confirmation_instructions(user, url) do
     deliver(user.email, "Confirmation instructions", """
 
@@ -40,6 +28,8 @@ defmodule Pento.Accounts.UserNotifier do
   @doc """
   Deliver instructions to reset a user password.
   """
+  @spec deliver_reset_password_instructions(User.t(), String.t()) ::
+          {:ok, Swoosh.Email.t() | {:error, term()}}
   def deliver_reset_password_instructions(user, url) do
     deliver(user.email, "Reset password instructions", """
 
@@ -60,6 +50,8 @@ defmodule Pento.Accounts.UserNotifier do
   @doc """
   Deliver instructions to update a user email.
   """
+  @spec deliver_update_email_instructions(user :: User.t(), url :: String.t()) ::
+          {:ok, Swoosh.Email.t() | {:error, term()}}
   def deliver_update_email_instructions(user, url) do
     deliver(user.email, "Update email instructions", """
 
@@ -75,5 +67,20 @@ defmodule Pento.Accounts.UserNotifier do
 
     ==============================
     """)
+  end
+
+  @spec deliver(recipient :: String.t(), subject :: String.t(), body :: String.t()) ::
+          {:ok, Swoosh.Email.t() | {:error, term()}}
+  defp deliver(recipient, subject, body) do
+    email =
+      new()
+      |> to(recipient)
+      |> from({"Pento", "contact@example.com"})
+      |> subject(subject)
+      |> text_body(body)
+
+    with {:ok, _metadata} <- Mailer.deliver(email) do
+      {:ok, email}
+    end
   end
 end
