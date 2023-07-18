@@ -5,7 +5,6 @@ defmodule Pento.Catalog do
 
   import Ecto.Query, warn: false
   alias Pento.Repo
-
   alias Pento.Catalog.Product
 
   @doc """
@@ -17,6 +16,7 @@ defmodule Pento.Catalog do
       [%Product{}, ...]
 
   """
+  @spec list_products() :: [Product.t()]
   def list_products do
     Repo.all(Product)
   end
@@ -35,6 +35,7 @@ defmodule Pento.Catalog do
       ** (Ecto.NoResultsError)
 
   """
+  @spec get_product!(String.t()) :: Product.t()
   def get_product!(id), do: Repo.get!(Product, id)
 
   @doc """
@@ -49,6 +50,7 @@ defmodule Pento.Catalog do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec create_product(map()) :: {:ok, Product.t()} | {:error, Ecto.Changeset.t()}
   def create_product(attrs \\ %{}) do
     %Product{}
     |> Product.changeset(attrs)
@@ -67,6 +69,7 @@ defmodule Pento.Catalog do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec update_product(Product.t(), map()) :: {:ok, Product.t()} | {:error, Ecto.Changeset.t()}
   def update_product(%Product{} = product, attrs) do
     product
     |> Product.changeset(attrs)
@@ -85,6 +88,7 @@ defmodule Pento.Catalog do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec delete_product(Product.t()) :: {:ok, Product.t()} | {:error, Ecto.Changeset.t()}
   def delete_product(%Product{} = product) do
     Repo.delete(product)
   end
@@ -98,6 +102,7 @@ defmodule Pento.Catalog do
       %Ecto.Changeset{data: %Product{}}
 
   """
+  @spec change_product(Product.t(), map()) :: Ecto.Changeset.t()
   def change_product(%Product{} = product, attrs \\ %{}) do
     Product.changeset(product, attrs)
   end
