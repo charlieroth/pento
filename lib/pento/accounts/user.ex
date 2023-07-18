@@ -1,6 +1,7 @@
 defmodule Pento.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Pento.Accounts.User
 
   schema "users" do
     field :email, :string
@@ -35,6 +36,11 @@ defmodule Pento.Accounts.User do
       submitting the form), this option can be set to `false`.
       Defaults to `true`.
   """
+  @spec registration_changeset(
+          user :: %User{} | %Ecto.Changeset{},
+          attrs :: map(),
+          opts :: Keyword.t()
+        ) :: Ecto.Changeset.t()
   def registration_changeset(user, attrs, opts \\ []) do
     user
     |> cast(attrs, [:email, :username, :password])
@@ -43,6 +49,7 @@ defmodule Pento.Accounts.User do
     |> validate_password(opts)
   end
 
+  @spec validate_email(changeset :: Ecto.Changeset.t(), opts :: Keyword.t()) :: Ecto.Changeset.t()
   defp validate_email(changeset, opts) do
     changeset
     |> validate_required([:email])
@@ -51,11 +58,14 @@ defmodule Pento.Accounts.User do
     |> maybe_validate_unique_email(opts)
   end
 
+  @spec validate_username(changeset :: Ecto.Changeset.t()) :: Ecto.Changeset.t()
   defp validate_username(changeset) do
     changeset
     |> unique_constraint([:username])
   end
 
+  @spec validate_password(changeset :: Ecto.Changeset.t(), opts :: Keyword.t()) ::
+          Ecto.Changeset.t()
   defp validate_password(changeset, opts) do
     changeset
     |> validate_required([:password])
@@ -67,6 +77,8 @@ defmodule Pento.Accounts.User do
     |> maybe_hash_password(opts)
   end
 
+  @spec maybe_hash_password(changeset :: Ecto.Changeset.t(), opts :: Keyword.t()) ::
+          Ecto.Changeset.t()
   defp maybe_hash_password(changeset, opts) do
     hash_password? = Keyword.get(opts, :hash_password, true)
     password = get_change(changeset, :password)
@@ -84,6 +96,8 @@ defmodule Pento.Accounts.User do
     end
   end
 
+  @spec maybe_validate_unique_email(changeset :: Ecto.Changeset.t(), opts :: Keyword.t()) ::
+          Ecto.Changeset.t()
   defp maybe_validate_unique_email(changeset, opts) do
     if Keyword.get(opts, :validate_email, true) do
       changeset
@@ -99,6 +113,11 @@ defmodule Pento.Accounts.User do
 
   It requires the email to change otherwise an error is added.
   """
+  @spec email_changeset(
+          user :: %User{} | %Ecto.Changeset{},
+          attrs :: map(),
+          opts :: Keyword.t()
+        ) :: Ecto.Changeset.t()
   def email_changeset(user, attrs, opts \\ []) do
     user
     |> cast(attrs, [:email])
@@ -114,6 +133,8 @@ defmodule Pento.Accounts.User do
 
   It requires the email to change otherwise an error is added.
   """
+  @spec username_changeset(user :: %User{} | %Ecto.Changeset{}, attrs :: map()) ::
+          Ecto.Changeset.t()
   def username_changeset(user, attrs) do
     user
     |> cast(attrs, [:username])
@@ -136,6 +157,11 @@ defmodule Pento.Accounts.User do
       validations on a LiveView form), this option can be set to `false`.
       Defaults to `true`.
   """
+  @spec password_changeset(
+          user :: %User{} | %Ecto.Changeset{},
+          attrs :: map(),
+          opts :: Keyword.t()
+        ) :: Ecto.Changeset.t()
   def password_changeset(user, attrs, opts \\ []) do
     user
     |> cast(attrs, [:password])
@@ -146,6 +172,7 @@ defmodule Pento.Accounts.User do
   @doc """
   Confirms the account by setting `confirmed_at`.
   """
+  @spec confirm_changeset(user :: %User{}) :: Ecto.Changeset.t()
   def confirm_changeset(user) do
     now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
     change(user, confirmed_at: now)
@@ -157,7 +184,8 @@ defmodule Pento.Accounts.User do
   If there is no user or the user doesn't have a password, we call
   `Bcrypt.no_user_verify/0` to avoid timing attacks.
   """
-  def valid_password?(%Pento.Accounts.User{hashed_password: hashed_password}, password)
+  @spec valid_password?(user :: %User{}, password :: String.t()) :: boolean()
+  def valid_password?(%User{hashed_password: hashed_password}, password)
       when is_binary(hashed_password) and byte_size(password) > 0 do
     Bcrypt.verify_pass(password, hashed_password)
   end
@@ -170,6 +198,10 @@ defmodule Pento.Accounts.User do
   @doc """
   Validates the current password otherwise adds an error to the changeset.
   """
+  @spec validate_current_password(
+          changeset :: Ecto.Changeset.t(),
+          password :: String.t()
+        ) :: Ecto.Changeset.t()
   def validate_current_password(changeset, password) do
     if valid_password?(changeset.data, password) do
       changeset
