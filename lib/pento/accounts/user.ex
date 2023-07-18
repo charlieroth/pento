@@ -114,7 +114,7 @@ defmodule Pento.Accounts.User do
 
   It requires the email to change otherwise an error is added.
   """
-  def username_changeset(user, attrs, opts \\ []) do
+  def username_changeset(user, attrs) do
     user
     |> cast(attrs, [:username])
     |> validate_username()
