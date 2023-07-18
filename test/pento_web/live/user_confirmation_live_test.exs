@@ -20,7 +20,7 @@ defmodule PentoWeb.UserConfirmationLiveTest do
     test "confirms the given token once", %{conn: conn, user: user} do
       token =
         extract_user_token(fn url ->
-          Accounts.deliver_user_confirmation_instructions(user, url)
+          Accounts.deliver_user_confirmation_instructions!(user, url)
         end)
 
       {:ok, lv, _html} = live(conn, ~p"/users/confirm/#{token}")

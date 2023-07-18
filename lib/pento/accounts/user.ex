@@ -113,11 +113,7 @@ defmodule Pento.Accounts.User do
 
   It requires the email to change otherwise an error is added.
   """
-  @spec email_changeset(
-          user :: %User{} | %Ecto.Changeset{},
-          attrs :: map(),
-          opts :: Keyword.t()
-        ) :: Ecto.Changeset.t()
+  @spec email_changeset(user :: %User{}, attrs :: map()) :: Ecto.Changeset.t()
   def email_changeset(user, attrs, opts \\ []) do
     user
     |> cast(attrs, [:email])
@@ -172,7 +168,7 @@ defmodule Pento.Accounts.User do
   @doc """
   Confirms the account by setting `confirmed_at`.
   """
-  @spec confirm_changeset(user :: %User{}) :: Ecto.Changeset.t()
+  @spec confirm_changeset(user :: %User{} | Ecto.Changeset.t()) :: Ecto.Changeset.t()
   def confirm_changeset(user) do
     now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
     change(user, confirmed_at: now)

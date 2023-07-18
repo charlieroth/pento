@@ -22,6 +22,7 @@ defmodule Pento.Accounts do
       nil
 
   """
+  @spec get_user_by_email(email :: String.t()) :: %User{} | nil
   def get_user_by_email(email) when is_binary(email) do
     Repo.get_by(User, email: email)
   end
@@ -38,6 +39,7 @@ defmodule Pento.Accounts do
       nil
 
   """
+  @spec get_user_by_username(username :: String.t()) :: %User{} | nil
   def get_user_by_username(username) when is_binary(username) do
     Repo.get_by(User, username: username)
   end
@@ -54,6 +56,8 @@ defmodule Pento.Accounts do
       nil
 
   """
+  @spec get_user_by_email_and_password(email :: String.t(), password :: String.t()) ::
+          %User{} | nil
   def get_user_by_email_and_password(email, password)
       when is_binary(email) and is_binary(password) do
     user = Repo.get_by(User, email: email)
@@ -72,6 +76,8 @@ defmodule Pento.Accounts do
       nil
 
   """
+  @spec get_user_by_username_and_password(username :: String.t(), password :: String.t()) ::
+          %User{} | nil
   def get_user_by_username_and_password(username, password)
       when is_binary(username) and is_binary(password) do
     user = Repo.get_by(User, username: username)
@@ -92,6 +98,7 @@ defmodule Pento.Accounts do
       ** (Ecto.NoResultsError)
 
   """
+  @spec get_user!(id :: integer()) :: %User{}
   def get_user!(id), do: Repo.get!(User, id)
 
   ## User registration
@@ -108,6 +115,7 @@ defmodule Pento.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec register_user(attrs :: map()) :: {:ok, %User{}} | {:error, Ecto.Changeset.t()}
   def register_user(attrs) do
     %User{}
     |> User.registration_changeset(attrs)
@@ -123,6 +131,7 @@ defmodule Pento.Accounts do
       %Ecto.Changeset{data: %User{}}
 
   """
+  @spec change_user_registration(user :: %User{}) :: Ecto.Changeset.t()
   def change_user_registration(%User{} = user, attrs \\ %{}) do
     User.registration_changeset(user, attrs, hash_password: false, validate_email: false)
   end
@@ -138,6 +147,7 @@ defmodule Pento.Accounts do
       %Ecto.Changeset{data: %User{}}
 
   """
+  @spec change_user_email(user :: %User{}) :: Ecto.Changeset.t()
   def change_user_email(user, attrs \\ %{}) do
     User.email_changeset(user, attrs, validate_email: false)
   end
@@ -151,6 +161,7 @@ defmodule Pento.Accounts do
       %Ecto.Changeset{data: %User{}}
 
   """
+  @spec change_user_username(user :: %User{}) :: Ecto.Changeset.t()
   def change_user_username(user, attrs \\ %{}) do
     User.username_changeset(user, attrs)
   end
@@ -168,6 +179,8 @@ defmodule Pento.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec apply_user_email(user :: %User{}, password :: String.t(), attrs :: map()) ::
+          {:ok, %User{}} | {:error, Ecto.Changeset.t()}
   def apply_user_email(user, password, attrs) do
     user
     |> User.email_changeset(attrs)
@@ -181,6 +194,7 @@ defmodule Pento.Accounts do
   If the token matches, the user email is updated and the token is deleted.
   The confirmed_at date is also updated to the current time.
   """
+  @spec update_user_email(user :: %User{}, token :: String.t()) :: :ok | :error
   def update_user_email(user, token) do
     context = "change:#{user.email}"
 
@@ -193,6 +207,8 @@ defmodule Pento.Accounts do
     end
   end
 
+  @spec user_email_multi(user :: %User{}, email :: String.t(), context :: String.t()) ::
+          Ecto.Multi.t()
   defp user_email_multi(user, email, context) do
     changeset =
       user
@@ -209,11 +225,17 @@ defmodule Pento.Accounts do
 
   ## Examples
 
-      iex> deliver_user_update_email_instructions(user, current_email, &url(~p"/users/settings/confirm_email/#{&1})")
+      iex> deliver_user_update_email_instructions!(user, current_email, &url(~p"/users/settings/confirm_email/#{&1})")
       {:ok, %{to: ..., body: ...}}
 
   """
-  def deliver_user_update_email_instructions(%User{} = user, current_email, update_email_url_fun)
+  @spec deliver_user_update_email_instructions!(
+          user :: %User{},
+          current_email :: String.t(),
+          update_email_url_fun :: (String.t() -> String.t())
+        ) ::
+          {:ok, map()} | {:error, String.t()}
+  def deliver_user_update_email_instructions!(%User{} = user, current_email, update_email_url_fun)
       when is_function(update_email_url_fun, 1) do
     {encoded_token, user_token} = UserToken.build_email_token(user, "change:#{current_email}")
 
@@ -230,6 +252,7 @@ defmodule Pento.Accounts do
       %Ecto.Changeset{data: %User{}}
 
   """
+  @spec change_user_password(user :: %User{}) :: Ecto.Changeset.t()
   def change_user_password(user, attrs \\ %{}) do
     User.password_changeset(user, attrs, hash_password: false)
   end
@@ -246,6 +269,8 @@ defmodule Pento.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec update_user_password(user :: %User{}, password :: String.t(), attrs :: map()) ::
+          {:ok, %User{}} | {:error, Ecto.Changeset.t()}
   def update_user_password(user, password, attrs) do
     changeset =
       user
@@ -267,7 +292,8 @@ defmodule Pento.Accounts do
   @doc """
   Generates a session token.
   """
-  def generate_user_session_token(user) do
+  @spec generate_user_session_token!(user :: %User{}) :: String.t()
+  def generate_user_session_token!(user) do
     {token, user_token} = UserToken.build_session_token(user)
     Repo.insert!(user_token)
     token
@@ -276,6 +302,7 @@ defmodule Pento.Accounts do
   @doc """
   Gets the user with the given signed token.
   """
+  @spec get_user_by_session_token(token :: String.t()) :: %User{} | nil
   def get_user_by_session_token(token) do
     {:ok, query} = UserToken.verify_session_token_query(token)
     Repo.one(query)
@@ -284,6 +311,7 @@ defmodule Pento.Accounts do
   @doc """
   Deletes the signed token with the given context.
   """
+  @spec delete_user_session_token(token :: String.t()) :: :ok
   def delete_user_session_token(token) do
     Repo.delete_all(UserToken.token_and_context_query(token, "session"))
     :ok
@@ -296,14 +324,19 @@ defmodule Pento.Accounts do
 
   ## Examples
 
-      iex> deliver_user_confirmation_instructions(user, &url(~p"/users/confirm/#{&1}"))
+      iex> deliver_user_confirmation_instructions!(user, &url(~p"/users/confirm/#{&1}"))
       {:ok, %{to: ..., body: ...}}
 
-      iex> deliver_user_confirmation_instructions(confirmed_user, &url(~p"/users/confirm/#{&1}"))
+      iex> deliver_user_confirmation_instructions!(confirmed_user, &url(~p"/users/confirm/#{&1}"))
       {:error, :already_confirmed}
 
   """
-  def deliver_user_confirmation_instructions(%User{} = user, confirmation_url_fun)
+  @spec deliver_user_confirmation_instructions!(
+          user :: %User{},
+          confirmation_url_fun :: (String.t() -> String.t())
+        ) ::
+          {:ok, map()} | {:error, String.t()}
+  def deliver_user_confirmation_instructions!(%User{} = user, confirmation_url_fun)
       when is_function(confirmation_url_fun, 1) do
     if user.confirmed_at do
       {:error, :already_confirmed}
@@ -320,6 +353,7 @@ defmodule Pento.Accounts do
   If the token matches, the user account is marked as confirmed
   and the token is deleted.
   """
+  @spec confirm_user(token :: String.t()) :: {:ok, %User{}} | :error
   def confirm_user(token) do
     with {:ok, query} <- UserToken.verify_email_token_query(token, "confirm"),
          %User{} = user <- Repo.one(query),
@@ -330,6 +364,7 @@ defmodule Pento.Accounts do
     end
   end
 
+  @spec confirm_user_multi(user :: %User{}) :: Ecto.Multi.t()
   defp confirm_user_multi(user) do
     Ecto.Multi.new()
     |> Ecto.Multi.update(:user, User.confirm_changeset(user))
@@ -343,11 +378,16 @@ defmodule Pento.Accounts do
 
   ## Examples
 
-      iex> deliver_user_reset_password_instructions(user, &url(~p"/users/reset_password/#{&1}"))
+      iex> deliver_user_reset_password_instructions!(user, &url(~p"/users/reset_password/#{&1}"))
       {:ok, %{to: ..., body: ...}}
 
   """
-  def deliver_user_reset_password_instructions(%User{} = user, reset_password_url_fun)
+  @spec deliver_user_reset_password_instructions!(
+          user :: %User{},
+          reset_password_url_fun :: (String.t() -> String.t())
+        ) ::
+          {:ok, map()}
+  def deliver_user_reset_password_instructions!(%User{} = user, reset_password_url_fun)
       when is_function(reset_password_url_fun, 1) do
     {encoded_token, user_token} = UserToken.build_email_token(user, "reset_password")
     Repo.insert!(user_token)
@@ -366,6 +406,7 @@ defmodule Pento.Accounts do
       nil
 
   """
+  @spec get_user_by_reset_password_token(token :: String.t()) :: %User{} | nil
   def get_user_by_reset_password_token(token) do
     with {:ok, query} <- UserToken.verify_email_token_query(token, "reset_password"),
          %User{} = user <- Repo.one(query) do
@@ -387,6 +428,8 @@ defmodule Pento.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec reset_user_password(user :: %User{}, attrs :: map()) ::
+          {:ok, %User{}} | {:error, Ecto.Changeset.t()}
   def reset_user_password(user, attrs) do
     Ecto.Multi.new()
     |> Ecto.Multi.update(:user, User.password_changeset(user, attrs))

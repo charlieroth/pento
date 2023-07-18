@@ -34,7 +34,7 @@ defmodule PentoWeb.UserConfirmationInstructionsLive do
 
   def handle_event("send_instructions", %{"user" => %{"email" => email}}, socket) do
     if user = Accounts.get_user_by_email(email) do
-      Accounts.deliver_user_confirmation_instructions(
+      Accounts.deliver_user_confirmation_instructions!(
         user,
         &url(~p"/users/confirm/#{&1}")
       )
