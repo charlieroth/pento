@@ -18,7 +18,7 @@ defmodule PentoWeb.UserLoginLiveTest do
         conn
         |> log_in_user(user_fixture())
         |> live(~p"/users/log_in")
-        |> follow_redirect(conn, "/")
+        |> follow_redirect(conn, "/guess")
 
       assert {:ok, _conn} = result
     end
@@ -32,11 +32,18 @@ defmodule PentoWeb.UserLoginLiveTest do
       {:ok, lv, _html} = live(conn, ~p"/users/log_in")
 
       form =
-        form(lv, "#login_form", user: %{email: user.email, password: password, remember_me: true})
+        form(lv, "#login_form",
+          user: %{
+            email: user.email,
+            username: user.username,
+            password: password,
+            remember_me: true
+          }
+        )
 
       conn = submit_form(form, conn)
 
-      assert redirected_to(conn) == ~p"/"
+      assert redirected_to(conn) == ~p"/guess"
     end
 
     test "redirects to login page with a flash error if there are no valid credentials", %{
@@ -46,7 +53,11 @@ defmodule PentoWeb.UserLoginLiveTest do
 
       form =
         form(lv, "#login_form",
-          user: %{email: "test@email.com", password: "123456", remember_me: true}
+          user: %{
+            email: "test@email.com",
+            password: "123456",
+            remember_me: true
+          }
         )
 
       conn = submit_form(form, conn)

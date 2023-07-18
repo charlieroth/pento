@@ -59,7 +59,8 @@ defmodule Pento.AccountsTest do
     end
 
     test "validates email and password when given" do
-      {:error, changeset} = Accounts.register_user(%{email: "not valid", password: "not valid"})
+      {:error, changeset} =
+        Accounts.register_user(%{email: "not valid", username: "", password: "not valid"})
 
       assert %{
                email: ["must have the @ sign and no spaces"],
@@ -75,8 +76,8 @@ defmodule Pento.AccountsTest do
     end
 
     test "validates email uniqueness" do
-      %{email: email} = user_fixture()
-      {:error, changeset} = Accounts.register_user(%{email: email})
+      %{email: email, username: username} = user_fixture()
+      {:error, changeset} = Accounts.register_user(%{email: email, username: username})
       assert "has already been taken" in errors_on(changeset).email
 
       # Now try with the upper cased email too, to check that email case is ignored.
