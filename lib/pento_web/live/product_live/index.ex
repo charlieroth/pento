@@ -6,7 +6,12 @@ defmodule PentoWeb.ProductLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :products, Catalog.list_products())}
+    {
+      :ok,
+      socket
+      |> assign(:greeting, "Welcome to Pento!")
+      |> stream(:products, Catalog.list_products())
+    }
   end
 
   @impl true
@@ -32,6 +37,11 @@ defmodule PentoWeb.ProductLive.Index do
     |> assign(:product, nil)
   end
 
+  @doc """
+  When a product is saved within the form component, the component will notify
+  it's parent (this module) via `send(self(), {__MODULE__, {:saved, product}})`.
+  This function will then update the socket with the new/updated product.
+  """
   @impl true
   def handle_info({PentoWeb.ProductLive.FormComponent, {:saved, product}}, socket) do
     {:noreply, stream_insert(socket, :products, product)}

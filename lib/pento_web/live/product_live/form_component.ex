@@ -4,34 +4,6 @@ defmodule PentoWeb.ProductLive.FormComponent do
   alias Pento.Catalog
 
   @impl true
-  def render(assigns) do
-    ~H"""
-    <div>
-      <.header>
-        <%= @title %>
-        <:subtitle>Use this form to manage product records in your database.</:subtitle>
-      </.header>
-
-      <.simple_form
-        for={@form}
-        id="product-form"
-        phx-target={@myself}
-        phx-change="validate"
-        phx-submit="save"
-      >
-        <.input field={@form[:name]} type="text" label="Name" />
-        <.input field={@form[:description]} type="text" label="Description" />
-        <.input field={@form[:unit_price]} type="number" label="Unit price" step="any" />
-        <.input field={@form[:sku]} type="number" label="Sku" />
-        <:actions>
-          <.button phx-disable-with="Saving...">Save Product</.button>
-        </:actions>
-      </.simple_form>
-    </div>
-    """
-  end
-
-  @impl true
   def update(%{product: product} = assigns, socket) do
     changeset = Catalog.change_product(product)
 
@@ -90,4 +62,32 @@ defmodule PentoWeb.ProductLive.FormComponent do
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
+
+  @impl true
+  def render(assigns) do
+    ~H"""
+    <div>
+      <.header>
+        <%= @title %>
+        <:subtitle>Use this form to manage product records in your database.</:subtitle>
+      </.header>
+
+      <.simple_form
+        for={@form}
+        id="product-form"
+        phx-target={@myself}
+        phx-change="validate"
+        phx-submit="save"
+      >
+        <.input field={@form[:name]} type="text" label="Name" />
+        <.input field={@form[:description]} type="text" label="Description" />
+        <.input field={@form[:unit_price]} type="number" label="Unit price" step="any" />
+        <.input field={@form[:sku]} type="number" label="Sku" />
+        <:actions>
+          <.button phx-disable-with="Saving...">Save Product</.button>
+        </:actions>
+      </.simple_form>
+    </div>
+    """
+  end
 end

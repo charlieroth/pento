@@ -437,6 +437,10 @@ defmodule PentoWeb.CoreComponents do
   @doc ~S"""
   Renders a table with generic styling.
 
+  If the socket assigns contain a `Phoenix.LiveView.LiveStream{}`, the table
+  will be rendered as a live stream, which will update the table rows as they
+  are inserted, updated, or deleted.
+
   ## Examples
 
       <.table id="users" rows={@users}>
