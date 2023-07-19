@@ -78,6 +78,29 @@ defmodule Pento.Catalog do
   end
 
   @doc """
+  Markdown the unit price of a product.
+
+  If the markdown amount is less than the current price
+
+  ## Examples
+
+      iex> markdown_product(product, amount)
+      {:ok, %Product{}}
+
+      iex> markdown_product(product, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  @spec markdown_product(product :: Product.t(), amount :: float()) ::
+          {:ok, Product.t()} | {:error, Ecto.Changeset.t()}
+  def markdown_product(%Product{} = product, amount) do
+    product
+    |> Ecto.Changeset.change()
+    |> Product.change_unit_price(product.unit_price, product.unit_price - amount)
+    |> Repo.update()
+  end
+
+  @doc """
   Deletes a product.
 
   ## Examples

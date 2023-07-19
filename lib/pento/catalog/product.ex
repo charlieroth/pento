@@ -21,8 +21,10 @@ defmodule Pento.Catalog.Product do
   end
 
   def change_unit_price(changeset, current_unit_price, new_unit_price) do
-    if new_unit_price < current_unit_price do
-      add_error(changeset, :unit_price, "cannot be decreased")
+    if new_unit_price > current_unit_price do
+      add_error(changeset, :unit_price, "cannot be increased")
+    else
+      change(changeset, unit_price: new_unit_price)
     end
   end
 end
