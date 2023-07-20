@@ -45,9 +45,8 @@ defmodule PentoWeb.PromoLive do
   end
 
   @impl true
-  def handle_event("save", _params, socket) do
-    {:ok, recipient} = Promo.send_promo(socket.assigns.form, %{})
-    IO.inspect(recipient, label: "recipient")
+  def handle_event("save", %{"recipient" => recipient_params}, socket) do
+    {:ok, _recipient} = Promo.send_promo(recipient_params, %{})
 
     {
       :noreply,
@@ -68,8 +67,8 @@ defmodule PentoWeb.PromoLive do
 
     <div>
       <.simple_form for={@form} id="promo-form" phx-change="validate" phx-submit="save">
-        <.input field={@form[:email]} type="email" label="Email" />
         <.input field={@form[:first_name]} type="text" label="First Name" />
+        <.input field={@form[:email]} type="email" label="Email" phx-debounce="blur" />
         <:actions>
           <.button phx-disable-with="Sending...">Send Promo Code</.button>
         </:actions>
