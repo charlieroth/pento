@@ -10,6 +10,7 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 alias Pento.Catalog
+alias Pento.Forum
 
 products = [
   %{
@@ -34,4 +35,21 @@ products = [
 
 Enum.each(products, fn product ->
   Catalog.create_product(product)
+end)
+
+questions = [
+  %{
+    question: "Has anyone completed level 7 of Tic-Tac-Toe?",
+    answer: "No",
+    vote_count: 10
+  },
+  %{
+    question: "Can someone explain to me how the rook moves in Chess?",
+    answer: "The rook moves vertically and horizontal as many spaces as it can",
+    vote_count: 15
+  }
+]
+
+Enum.each(questions, fn question ->
+  Forum.create_question(question)
 end)
