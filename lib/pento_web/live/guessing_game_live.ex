@@ -16,6 +16,55 @@ defmodule PentoWeb.GuessingGameLive do
   end
 
   @impl true
+  def handle_event("guess", %{"number" => guess}, socket) do
+    guess = String.to_integer(guess)
+
+    guesses = socket.assigns.guesses - 1
+
+    higher = guess < socket.assigns.random_number
+
+    has_won = guesses >= 0 and guess == socket.assigns.random_number
+    has_lost = guesses == 0 and guess != socket.assigns.random_number
+    still_playing = guesses > 0 and guess != socket.assigns.random_number
+
+    cond do
+      has_won == true ->
+        message = "You guessed: #{guess}. Correct!"
+        {:noreply, assign(socket, state: :won, guesses: guesses, message: message)}
+
+      has_lost == true ->
+        message = "You failed to guess the number. It was #{socket.assigns.random_number}."
+        {:noreply, assign(socket, state: :lost, guesses: guesses, message: message)}
+
+      still_playing == true ->
+        if higher == true do
+          message = "You guessed: #{guess}. Wrong. Guess higher."
+          {:noreply, assign(socket, state: :guessing, guesses: guesses, message: message)}
+        else
+          message = "You guessed: #{guess}. Wrong. Guess lower."
+          {:noreply, assign(socket, state: :guessing, guesses: guesses, message: message)}
+        end
+
+      true ->
+        message = "Something went wrong."
+        {:noreply, assign(socket, state: :error, guesses: guesses, message: message)}
+    end
+  end
+
+  @impl true
+  def handle_event("reset", _params, socket) do
+    random_number = Enum.random(1..1)
+
+    {:noreply,
+     assign(socket,
+       guesses: 5,
+       state: :guessing,
+       message: "",
+       random_number: random_number
+     )}
+  end
+
+  @impl true
   def render(assigns) do
     ~H"""
     <p class="text-sm">Current User: <%= @current_user.email %></p>
@@ -66,54 +115,5 @@ defmodule PentoWeb.GuessingGameLive do
       </button>
     <% end %>
     """
-  end
-
-  @impl true
-  def handle_event("guess", %{"number" => guess}, socket) do
-    guess = String.to_integer(guess)
-
-    guesses = socket.assigns.guesses - 1
-
-    higher = guess < socket.assigns.random_number
-
-    has_won = guesses >= 0 and guess == socket.assigns.random_number
-    has_lost = guesses == 0 and guess != socket.assigns.random_number
-    still_playing = guesses > 0 and guess != socket.assigns.random_number
-
-    cond do
-      has_won == true ->
-        message = "You guessed: #{guess}. Correct!"
-        {:noreply, assign(socket, state: :won, guesses: guesses, message: message)}
-
-      has_lost == true ->
-        message = "You failed to guess the number. It was #{socket.assigns.random_number}."
-        {:noreply, assign(socket, state: :lost, guesses: guesses, message: message)}
-
-      still_playing == true ->
-        if higher == true do
-          message = "You guessed: #{guess}. Wrong. Guess higher."
-          {:noreply, assign(socket, state: :guessing, guesses: guesses, message: message)}
-        else
-          message = "You guessed: #{guess}. Wrong. Guess lower."
-          {:noreply, assign(socket, state: :guessing, guesses: guesses, message: message)}
-        end
-
-      true ->
-        message = "Something went wrong."
-        {:noreply, assign(socket, state: :error, guesses: guesses, message: message)}
-    end
-  end
-
-  @impl true
-  def handle_event("reset", _params, socket) do
-    random_number = Enum.random(1..1)
-
-    {:noreply,
-     assign(socket,
-       guesses: 5,
-       state: :guessing,
-       message: "",
-       random_number: random_number
-     )}
   end
 end
