@@ -72,6 +72,8 @@ defmodule PentoWeb.Router do
       live "/questions/:id", QuestionLive.Show, :show
       live "/questions/:id/show/edit", QuestionLive.Show, :edit
 
+      live "/promo", PromoLive
+
       live "/guess", GuessingGameLive
     end
   end
