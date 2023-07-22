@@ -1,6 +1,7 @@
 defmodule Pento.Catalog.Product do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Pento.Catalog.Product
 
   schema "products" do
     field :description, :string
@@ -13,7 +14,8 @@ defmodule Pento.Catalog.Product do
   end
 
   @doc false
-  def changeset(product, attrs) do
+  @spec changeset(product :: %Product{}, attrs :: map()) :: Ecto.Changeset.t()
+  def changeset(product, attrs \\ %{}) do
     product
     |> cast(attrs, [:name, :description, :unit_price, :sku, :image_upload])
     |> validate_required([:name, :description, :unit_price, :sku])
@@ -21,6 +23,11 @@ defmodule Pento.Catalog.Product do
     |> validate_number(:unit_price, greater_than: 0.0)
   end
 
+  @spec change_unit_price(
+          changeset :: Ecto.Changeset.t(),
+          current_unit_price :: float(),
+          new_unit_price :: float()
+        ) :: Ecto.Changeset.t()
   def change_unit_price(changeset, current_unit_price, new_unit_price) do
     if new_unit_price > current_unit_price do
       add_error(changeset, :unit_price, "cannot be increased")
