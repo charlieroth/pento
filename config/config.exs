@@ -12,6 +12,7 @@ config :pento,
 
 # Configures the endpoint
 config :pento, PentoWeb.Endpoint,
+  adapter: Bandit.PhoenixAdapter,
   url: [host: "localhost"],
   render_errors: [
     formats: [html: PentoWeb.ErrorHTML, json: PentoWeb.ErrorJSON],
