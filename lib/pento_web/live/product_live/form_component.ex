@@ -117,7 +117,14 @@ defmodule PentoWeb.ProductLive.FormComponent do
       >
         <.input field={@form[:name]} type="text" label="Name" />
         <.input field={@form[:description]} type="text" label="Description" />
-        <.input field={@form[:unit_price]} type="number" label="Unit price" step="any" />
+        <.input
+          field={@form[:unit_price]}
+          min="0.00"
+          max="10000.00"
+          type="number"
+          label="Unit price"
+          step="0.01"
+        />
         <.input field={@form[:sku]} type="number" label="Sku" />
 
         <form id="upload-form" phx-submit="save" phx-change="validate">
