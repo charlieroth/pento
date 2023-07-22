@@ -4,6 +4,7 @@ defmodule Pento.Catalog do
   """
 
   import Ecto.Query, warn: false
+  alias Pento.Catalog.ProductSearch
   alias Pento.Repo
   alias Pento.Catalog.Product
 
@@ -101,6 +102,42 @@ defmodule Pento.Catalog do
   end
 
   @doc """
+  Search for products.
+
+  Currently only supports search by name and description.
+
+  ## Examples
+
+      iex> search_products(%ProductSearch{})
+      [%Product{}, ...]
+
+  """
+  @spec search_products(product_search_params :: map()) :: [%Product{}]
+  def search_products(%{name: _name, description: _description} = product_search_params) do
+    search_products_by(product_search_params)
+  end
+
+  defp search_products_by(%{name: nil, description: nil}), do: []
+  defp search_products_by(%{name: "", description: ""}), do: []
+
+  defp search_products_by(%{name: name, description: ""}) do
+    from(p in Product, where: ilike(p.name, ^"%#{name}%")) |> Repo.all()
+  end
+
+  defp search_products_by(%{name: "", description: description}) do
+    from(p in Product, where: ilike(p.description, ^"%#{description}%")) |> Repo.all()
+  end
+
+  defp search_products_by(%{name: name, description: description}) do
+    from(
+      p in Product,
+      where: ilike(p.name, ^"%#{name}%"),
+      or_where: ilike(p.description, ^"%#{description}%")
+    )
+    |> Repo.all()
+  end
+
+  @doc """
   Deletes a product.
 
   ## Examples
@@ -130,5 +167,20 @@ defmodule Pento.Catalog do
   @spec change_product(product :: Product.t(), attrs :: map()) :: Ecto.Changeset.t()
   def change_product(%Product{} = product, attrs \\ %{}) do
     Product.changeset(product, attrs)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking product search changes.
+
+  ## Examples
+
+      iex> change_product_search(product_search)
+      %Ecto.Changeset{data: %ProductSearch{}}
+
+  """
+  @spec change_product_search(product_search :: %ProductSearch{}, attrs :: map()) ::
+          Ecto.Changeset.t()
+  def change_product_search(%ProductSearch{} = product_search, attrs \\ %{}) do
+    ProductSearch.changeset(product_search, attrs)
   end
 end

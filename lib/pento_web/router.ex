@@ -75,6 +75,8 @@ defmodule PentoWeb.Router do
       live "/promo", PromoLive
 
       live "/guess", GuessingGameLive
+
+      live "/search", SearchLive
     end
   end
 
