@@ -5,7 +5,7 @@ defmodule Pento.Survey do
 
   import Ecto.Query, warn: false
   alias Pento.Repo
-
+  alias Pento.Accounts.User
   alias Pento.Survey.Demographic
 
   @doc """
@@ -115,6 +115,22 @@ defmodule Pento.Survey do
   """
   def list_ratings do
     Repo.all(Rating)
+  end
+
+  @doc """
+  Returns the demographic of a user
+
+  ## Examples
+
+      iex> get_demographic_for_user(user)
+      %Demographic{}
+
+  """
+  @spec get_demographic_by_user(user :: %User{}) :: %Demographic{}
+  def get_demographic_by_user(user) do
+    user
+    |> Demographic.Query.for_user()
+    |> Repo.one()
   end
 
   @doc """

@@ -4,9 +4,9 @@ defmodule Pento.Catalog do
   """
 
   import Ecto.Query, warn: false
-  alias Pento.Catalog.ProductSearch
   alias Pento.Repo
-  alias Pento.Catalog.Product
+  alias Pento.Catalog.{Product, ProductSearch}
+  alias Pento.Accounts.User
 
   @doc """
   Returns the list of products.
@@ -20,6 +20,20 @@ defmodule Pento.Catalog do
   @spec list_products() :: [Product.t()]
   def list_products do
     Repo.all(Product)
+  end
+
+  @doc """
+  Returns the list of products with user ratings.
+
+  ## Examples
+
+      iex> list_products_with_user_rating(%User{})
+      [%Product{}, ...]
+
+  """
+  @spec list_products_with_user_rating(user :: %User{}) :: [Product.t()]
+  def list_products_with_user_rating(user) do
+    Product.Query.with_user_ratings(user) |> Repo.all()
   end
 
   @doc """
