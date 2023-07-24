@@ -1,16 +1,14 @@
-# Script for populating the database. You can run it as:
-#
-#     mix run priv/repo/seeds.exs
-#
-# Inside the script, you can read and write to any of your
-# repositories directly:
-#
-#     Pento.Repo.insert!(%Pento.SomeSchema{})
-#
-# We recommend using the bang functions (`insert!`, `update!`
-# and so on) as they will fail if something goes wrong.
 alias Pento.Catalog
 alias Pento.Forum
+alias Pento.Accounts
+
+user = %{
+  email: "charlie@pento.com",
+  username: "charlie",
+  password: "password1234"
+}
+
+Accounts.register_user(user)
 
 products = [
   %{
