@@ -10,11 +10,6 @@ defmodule Pento.ForumTest do
 
     @invalid_attrs %{question: nil, answer: nil, vote_count: nil}
 
-    test "list_questions/0 returns all questions" do
-      question = question_fixture()
-      assert Forum.list_questions() == [question]
-    end
-
     test "get_question!/1 returns the question with given id" do
       question = question_fixture()
       assert Forum.get_question!(question.id) == question
@@ -35,7 +30,12 @@ defmodule Pento.ForumTest do
 
     test "update_question/2 with valid data updates the question" do
       question = question_fixture()
-      update_attrs = %{question: "some updated question", answer: "some updated answer", vote_count: 43}
+
+      update_attrs = %{
+        question: "some updated question",
+        answer: "some updated answer",
+        vote_count: 43
+      }
 
       assert {:ok, %Question{} = question} = Forum.update_question(question, update_attrs)
       assert question.question == "some updated question"

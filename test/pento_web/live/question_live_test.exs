@@ -5,7 +5,11 @@ defmodule PentoWeb.QuestionLiveTest do
   import Pento.ForumFixtures
 
   @create_attrs %{question: "some question", answer: "some answer", vote_count: 42}
-  @update_attrs %{question: "some updated question", answer: "some updated answer", vote_count: 43}
+  @update_attrs %{
+    question: "some updated question",
+    answer: "some updated answer",
+    vote_count: 43
+  }
   @invalid_attrs %{question: nil, answer: nil, vote_count: nil}
 
   defp create_question(_) do
@@ -14,7 +18,7 @@ defmodule PentoWeb.QuestionLiveTest do
   end
 
   describe "Index" do
-    setup [:create_question]
+    setup [:register_and_log_in_user, :create_question]
 
     test "lists all questions", %{conn: conn, question: question} do
       {:ok, _index_live, html} = live(conn, ~p"/questions")
@@ -78,7 +82,7 @@ defmodule PentoWeb.QuestionLiveTest do
   end
 
   describe "Show" do
-    setup [:create_question]
+    setup [:register_and_log_in_user, :create_question]
 
     test "displays question", %{conn: conn, question: question} do
       {:ok, _show_live, html} = live(conn, ~p"/questions/#{question}")
