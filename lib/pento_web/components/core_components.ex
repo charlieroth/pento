@@ -268,7 +268,7 @@ defmodule PentoWeb.CoreComponents do
 
   attr :type, :string,
     default: "text",
-    values: ~w(checkbox color date datetime-local email file hidden month number password
+    values: ~w(rating checkbox color date datetime-local email file hidden month number password
                range radio search select tel text textarea time url week)
 
   attr :field, Phoenix.HTML.FormField,
@@ -355,6 +355,15 @@ defmodule PentoWeb.CoreComponents do
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
       <.error :for={msg <- @errors}><%= msg %></.error>
     </div>
+    """
+  end
+
+  def input(%{type: "rating"} = assigns) do
+    ~H"""
+    <select id={@id} name={@name} class="border focus:ring-zinc-500" multiple={@multiple} {@rest}>
+      <option :if={@prompt} value=""><%= @prompt %></option>
+      <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
+    </select>
     """
   end
 

@@ -1,6 +1,6 @@
 defmodule PentoWeb.SurveyLive do
-  alias Pento.Catalog
   use PentoWeb, :live_view
+  alias Pento.Catalog
   alias Pento.Survey
   alias Pento.Survey.Demographic
   alias PentoWeb.{DemographicLive, RatingLive}
@@ -20,6 +20,21 @@ defmodule PentoWeb.SurveyLive do
       socket
       |> put_flash(:info, "Demographic created successfully")
       |> assign(:demographic, demographic)
+    }
+  end
+
+  def handle_info(
+        {:rating_created, product, product_index},
+        %{assigns: %{products: products}} = socket
+      ) do
+    {
+      :noreply,
+      socket
+      |> put_flash(:info, "Rating created successfully")
+      |> assign(
+        :products,
+        List.replace_at(products, product_index, product)
+      )
     }
   end
 
