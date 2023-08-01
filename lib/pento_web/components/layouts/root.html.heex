@@ -23,31 +23,18 @@
         </div>
         <div class="flex items-center gap-4 font-semibold leading-6 text-zinc-900">
           <%= if @current_user do %>
-            <%= @current_user.email %>
-            <.link
-              href={~p"/search"}
-              class="rounded-lg bg-zinc-100 px-2 py-1 hover:bg-zinc-200/80"
-            >
-              Search
-            </.link>
             <.link
               href={~p"/products"}
               class="rounded-lg bg-zinc-100 px-2 py-1 hover:bg-zinc-200/80"
             >
               Products
             </.link>
-            <%!-- <.link
-              href={~p"/promo"}
-              class="rounded-lg bg-zinc-100 px-2 py-1 hover:bg-zinc-200/80"
-            >
-              Promo
-            </.link>
             <.link
-              href={~p"/guess"}
+              href={~p"/survey"}
               class="rounded-lg bg-zinc-100 px-2 py-1 hover:bg-zinc-200/80"
             >
-              Guessing Game
-            </.link> --%>
+              Survey
+            </.link>
             <.link
               href={~p"/users/settings"}
               class="rounded-lg bg-zinc-100 px-2 py-1 hover:bg-zinc-200/80"
