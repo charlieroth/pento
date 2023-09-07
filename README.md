@@ -1,18 +1,19 @@
 # Pento
 
-To start your Phoenix server:
+Project from the book `Programming Phoenix LiveView`
 
-  * Run `mix setup` to install and setup dependencies
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+## Progress
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
-
-## Learn more
-
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+- [x] Chapter 1 - Get To Know LiveView
+- [x] Chapter 2 - Phoenix and Authentication
+- [x] Chapter 3 - Generators: Contexts and Schemas
+- [x] Chapter 4 - Generators: Live Views and Templates
+- [x] Chapter 5 - Forms and Changesets
+- [x] Chapter 6 - Function Components
+- [x] Chapter 7 - Live Components
+- [ ] Chapter 8 - Building an Interactive Dashboard
+- [ ] Chapter 9 - Build a Distributed Dashboard
+- [ ] Chapter 10 - Test Your Live Views
+- [ ] Chapter 11 - Build the Game Core
+- [ ] Cahpter 12 - Render Graphics with SVG
+- [ ] Chapter 13 - Establish Boundaries and APIs
