@@ -8,18 +8,7 @@ defmodule PentoWeb.RatingLive.Form do
      socket
      |> assign(assigns)
      |> assign_rating()
-     |> assign_form()}
-  end
-
-  def handle_event("change", %{"rating" => rating_params}, socket) do
-    rating_params = params_with_user(socket, rating_params)
-
-    changeset =
-      socket.assigns.rating
-      |> Survey.change_rating(rating_params)
-      |> Map.put(:action, :validate)
-
-    {:noreply, assign(socket, :form, to_form(changeset))}
+     |> clear_form()}
   end
 
   def handle_event("submit", %{"rating" => rating_params}, socket) do
@@ -46,31 +35,36 @@ defmodule PentoWeb.RatingLive.Form do
     Map.put(rating_params, "user_id", socket.assigns.current_user.id)
   end
 
-  defp assign_rating(socket) do
-    assign(socket, :rating, %Rating{})
+  defp assign_rating(%{assigns: %{current_user: user, product: product}} = socket) do
+    assign(socket, :rating, %Rating{user_id: user.id, product_id: product.id})
   end
 
-  defp assign_form(%{assigns: %{rating: rating}} = socket) do
-    changeset = Survey.change_rating(rating)
+  defp clear_form(%{assigns: %{rating: rating}} = socket) do
+    assign_form(socket, Survey.change_rating(rating))
+  end
+
+  defp assign_form(socket, changeset) do
     assign(socket, :form, to_form(changeset))
   end
 
   def render(assigns) do
     ~H"""
-    <.simple_form for={@form} id={@id} phx-target={@myself} phx-change="change" phx-submit="submit">
-      <.input field={@form[:user_id]} type="hidden" />
-      <.input field={@form[:product_id]} type="hidden" />
-      <.input
-        type="rating"
-        label="Rating"
-        field={@form[:stars]}
-        options={["★ ★ ★ ★ ★": 5, "★ ★ ★ ★": 4, "★ ★ ★": 3, "★ ★": 2, "★": 1]}
-      />
+    <div>
+      <.simple_form for={@form} id={@id} phx-target={@myself} phx-submit="submit">
+        <.input field={@form[:user_id]} type="hidden" />
+        <.input field={@form[:product_id]} type="hidden" />
+        <.input
+          field={@form[:stars]}
+          type="rating"
+          label="Rating"
+          options={["★ ★ ★ ★ ★": 5, "★ ★ ★ ★": 4, "★ ★ ★": 3, "★ ★": 2, "★": 1]}
+        />
 
-      <:actions>
-        <.button phx-disable-with="Saving...">Save</.button>
-      </:actions>
-    </.simple_form>
+        <:actions>
+          <.button phx-disable-with="Saving...">Save</.button>
+        </:actions>
+      </.simple_form>
+    </div>
     """
   end
 end
