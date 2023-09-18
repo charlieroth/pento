@@ -211,8 +211,31 @@ defmodule Pento.Catalog do
       ]
 
   """
-  @spec list_products_with_average_ratings() :: [%Product{}]
-  def list_products_with_average_ratings do
-    Product.Query.with_average_ratings() |> Repo.all()
+  @spec list_products_with_average_ratings(filters :: map()) :: [%Product{}]
+  def list_products_with_average_ratings(%{age_group_filter: age_group_filter}) do
+    Product.Query.with_average_ratings()
+    |> Product.Query.join_users()
+    |> Product.Query.join_demographics()
+    |> Product.Query.filter_by_age_group(age_group_filter)
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns the list of products with all zero ratings
+
+  ## Examples
+
+      iex> products_with_zero_ratings()
+      [
+        {"Checkers", 0.0},
+        {"Table Tennis", 0.0},
+        ...
+      ]
+
+  """
+  @spec products_with_zero_ratings() :: [%Product{}]
+  def products_with_zero_ratings() do
+    Product.Query.with_zero_ratings()
+    |> Repo.all()
   end
 end
