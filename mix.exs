@@ -43,7 +43,8 @@ defmodule Pento.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
-      {:bandit, "~> 1.0.0-pre"}
+      {:bandit, "~> 1.0.0-pre"},
+      {:contex, "~> 0.5.0"}
     ]
   end
 
