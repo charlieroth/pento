@@ -197,4 +197,22 @@ defmodule Pento.Catalog do
   def change_product_search(%ProductSearch{} = product_search, attrs \\ %{}) do
     ProductSearch.changeset(product_search, attrs)
   end
+
+  @doc """
+  Returns the list of products with average ratings.
+
+  ## Examples
+
+      iex> list_products_with_average_ratings()
+      [
+        {"Checkers", 4.0},
+        {"Table Tennis", 1.0},
+        ...
+      ]
+
+  """
+  @spec list_products_with_average_ratings() :: [%Product{}]
+  def list_products_with_average_ratings do
+    Product.Query.with_average_ratings() |> Repo.all()
+  end
 end
