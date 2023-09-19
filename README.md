@@ -11,7 +11,7 @@ Project from the book `Programming Phoenix LiveView`
 - [x] Chapter 5 - Forms and Changesets
 - [x] Chapter 6 - Function Components
 - [x] Chapter 7 - Live Components
-- [ ] Chapter 8 - Building an Interactive Dashboard
+- [x] Chapter 8 - Building an Interactive Dashboard
 - [ ] Chapter 9 - Build a Distributed Dashboard
 - [ ] Chapter 10 - Test Your Live Views
 - [ ] Chapter 11 - Build the Game Core
