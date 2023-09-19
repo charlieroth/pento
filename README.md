@@ -12,7 +12,7 @@ Project from the book `Programming Phoenix LiveView`
 - [x] Chapter 6 - Function Components
 - [x] Chapter 7 - Live Components
 - [x] Chapter 8 - Building an Interactive Dashboard
-- [ ] Chapter 9 - Build a Distributed Dashboard
+- [x] Chapter 9 - Build a Distributed Dashboard
 - [ ] Chapter 10 - Test Your Live Views
 - [ ] Chapter 11 - Build the Game Core
 - [ ] Cahpter 12 - Render Graphics with SVG
