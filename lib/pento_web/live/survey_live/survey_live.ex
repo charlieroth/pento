@@ -1,9 +1,12 @@
 defmodule PentoWeb.SurveyLive do
+  alias PentoWeb.Endpoint
   use PentoWeb, :live_view
   alias Pento.Catalog
   alias Pento.Survey
   alias Pento.Survey.Demographic
-  alias PentoWeb.{DemographicLive, RatingLive}
+  alias PentoWeb.{DemographicLive, RatingLive, Endpoint}
+
+  @survey_results_topic "survey_results"
 
   def mount(_params, _session, socket) do
     {
@@ -23,17 +26,24 @@ defmodule PentoWeb.SurveyLive do
     }
   end
 
-  def handle_info(
-        {:rating_created, product, product_index},
-        %{assigns: %{products: products}} = socket
-      ) do
+  def handle_info({:rating_created, product, product_index}, socket) do
+    handle_rating_created(socket, product, product_index)
+  end
+
+  defp handle_rating_created(
+         %{assigns: %{products: products}} = socket,
+         updated_product,
+         product_index
+       ) do
+    Endpoint.broadcast(@survey_results_topic, "rating_created", %{})
+
     {
       :noreply,
       socket
       |> put_flash(:info, "Rating created successfully")
       |> assign(
         :products,
-        List.replace_at(products, product_index, product)
+        List.replace_at(products, product_index, updated_product)
       )
     }
   end
