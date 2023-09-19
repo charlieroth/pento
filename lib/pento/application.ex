@@ -10,6 +10,7 @@ defmodule Pento.Application do
       Pento.Repo,
       {Phoenix.PubSub, name: Pento.PubSub},
       {Finch, name: Pento.Finch},
+      PentoWeb.Presence,
       PentoWeb.Endpoint
     ]
 
